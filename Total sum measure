@@ -1,0 +1,20 @@
+## Lag først measuren som løser problemet ditt ##
+
+Measure 1 = 
+
+VAR beste_rente = IF(
+                    OR(
+                        [Vekta lånerente BULDER] < [Vekta lånerente CHU],
+                        [Vekta lånerente BULDER] = [Vekta lånerente CHU]), 
+                        [Vekta lånerente BULDER], [Vekta lånerente CHU])
+
+RETURN
+[Lånesaldo CHU] * beste_rente
+
+## Inkluder denne measuren i denne measuren for å summere korrekt på TOTAL-nivå ##
+
+Measure 2 = 
+VAR testo = SUMMARIZE('pm REP_CHU_MND_STAT', [Belåningstrapp], "testa", [Measure 1])
+
+RETURN
+IF(HASONEVALUE('pm REP_CHU_MND_STAT'[belåningstrapp]), [Measure 1], SUMX(testo, [testa]))
