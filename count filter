@@ -1,0 +1,7 @@
+Open cases = COUNTX(FILTER(Query1, Query1[Status_1] = "Open"), Query[Status_1])
+
+Count column = CALCULATE(
+    DISTINCTCOUNT([Table][Column1]),
+    [Table][Column2] = "Grønn"
+    &&
+    [Table][Column3] = "Søknad innsendt")
