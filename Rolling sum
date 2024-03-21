@@ -8,3 +8,20 @@ CALCULATE(
         'Table'[Date] <= CurrentMonth
     )
 )
+
+
+## inkluder slicer som et filter##
+Rolling sum customers = 
+VAR CurrentMonth = MAX('Table'[Date])
+VAR selected_marked = SELECTEDVALUE('Table'[Marked])
+
+RETURN
+CALCULATE(
+    [Count customer],
+    FILTER(
+        ALL('Mislighold data'),
+        'Table'[Date] <= CurrentMonth
+        &&
+        'Table'[Marked] = selected_marked
+    )
+)
