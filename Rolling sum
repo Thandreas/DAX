@@ -1,0 +1,10 @@
+Rolling Sum Customers = 
+VAR CurrentMonth = MAX('Table'[Date])
+RETURN
+CALCULATE(
+    [Count Customer],
+    FILTER(
+        ALL('Table'),
+        'Table'[Date] <= CurrentMonth
+    )
+)
