@@ -1,5 +1,5 @@
 ## Lage dynamisk tittel med en vanlig kolonne ##
-Tittel 1 = FORMAT( "test" & SELECTEDVALUE(Table[Column]), "#,0.0")
+Tittel 1 = FORMAT( "test " & SELECTEDVALUE(Table[Column]), "#,0.0")
 
 ## Lage dynamisk tittel med en parameter field value
-Tittel 2 = FORMAT( "test" & VALUES(Parameter[Parameter]), "#,0.0")
+Tittel 2 = FORMAT( "test " & VALUES(Parameter[Parameter]), "#,0.0")
