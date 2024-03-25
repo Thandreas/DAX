@@ -3,3 +3,5 @@ Tittel 1 = FORMAT( "test " & SELECTEDVALUE(Table[Column]), "#,0.0")
 
 ## Lage dynamisk tittel med en parameter field value
 Tittel 2 = FORMAT( "test " & VALUES(Parameter[Parameter]), "#,0.0")
+
+Telle slicer = IF(ISFILTERED(Parameter[Parameter Fields]), COUNTROWS(VALUES(Parameter[Parameter Fields])),0)
