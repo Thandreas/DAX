@@ -1,0 +1,42 @@
+let
+    StartDate = #date(2018, 1, 1),
+    EndDate = DateTime.Date(DateTime.LocalNow()),
+    #"==SET PARAMETERS ABOVE==" = 1,
+    ListDates = List.Dates(StartDate, Number.From(EndDate - StartDate)+1, #duration(1,0,0,0)),
+    #"Converted to Table" = Table.FromList(ListDates, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Renamed Columns as Date" = Table.RenameColumns(#"Converted to Table",{{"Column1", "Date"}}),
+    // As far as Power BI is concerned, the 'Date' column is all that is needed :-) But we will continue and add a few Human-Friendly Columns
+    #"Changed Type to Date" = Table.TransformColumnTypes(#"Renamed Columns as Date",{{"Date", type date}}),
+    #"Added Calendar MonthNum" = Table.AddColumn(#"Changed Type to Date", "MonthNum", each Date.Month([Date]), Int64.Type),
+    #"Added Month Name" = Table.AddColumn(#"Added Calendar MonthNum", "Month", each Text.Start(Date.MonthName([Date]),3), type text),
+    #"Added Month Name Long" = Table.AddColumn(#"Added Month Name", "MonthLong", each Date.MonthName([Date]), type text),
+    #"Added Calendar Quarter" = Table.AddColumn(#"Added Month Name Long", "Quarter", each "Q" & Text.From(Date.QuarterOfYear([Date]))),
+    #"Added Calendar Year" = Table.AddColumn(#"Added Calendar Quarter", "Year", each Date.Year([Date]), Int64.Type),
+    // Used as 'Sort by Column' for MonthYear columns
+    #"Added MonthYearNum" = Table.AddColumn(#"Added Calendar Year", "MonthYearNum", each [Year]*100 + [MonthNum] /*e.g. Sep-2016 would become 201609*/, Int64.Type),
+    #"Added MonthYear" = Table.AddColumn(#"Added MonthYearNum", "MonthYear", each [Month] & "-" & Text.End(Text.From([Year]),2)),
+    #"Added MonthYearLong" = Table.AddColumn(#"Added MonthYear", "MonthYearLong", each [Month] & "-" & Text.From([Year])),
+    #"Added WeekdayNum" = Table.AddColumn(#"Added MonthYearLong", "WeekdayNum", each Date.DayOfWeek([Date]), Int64.Type),
+    #"Added Weekday Name" = Table.AddColumn(#"Added WeekdayNum", "Weekday", each Text.Start(Date.DayOfWeekName([Date]),7), type text),
+    #"Added WeekdayWeekend" = Table.AddColumn(#"Added Weekday Name", "WeekdayWeekend", each if [WeekdayNum] = 5 or [WeekdayNum] = 6 then "Weekend"
+else "Weekday"),
+    #"Inserted Day of Year" = Table.AddColumn(#"Added WeekdayWeekend", "Day of Year", each Date.DayOfYear([Date]), Int64.Type),
+    #"Inserted Week of Year" = Table.AddColumn(#"Inserted Day of Year", "Week of Year", each Date.WeekOfYear([Date]), Int64.Type),
+    #"Inserted Merged Column" = Table.AddColumn(#"Inserted Week of Year", "Quarter-Year", each Text.Combine({Text.From([Week of Year], "nb-NO"), [Quarter], Text.From([Year], "nb-NO")}, "-"), type text),
+    #"Removed Columns" = Table.RemoveColumns(#"Inserted Merged Column",{"Quarter-Year"}),
+    #"Inserted Merged Column1" = Table.AddColumn(#"Removed Columns", "Quarter-Year", each Text.Combine({[Quarter], Text.From([Year], "nb-NO")}, "-"), type text),
+    #"Added Quarter-Year Column" = Table.AddColumn(#"Removed Columns", "Quarter-Year", each Text.Combine({[Quarter], Text.From([Year], "nb-NO")}, "-"), type text),
+    #"Filtered Rows" = Table.SelectRows(#"Added Quarter-Year Column", each true),
+    #"Capitalized Each Word" = Table.TransformColumns(#"Filtered Rows",{{"MonthLong", Text.Proper, type text}, {"MonthYear", Text.Proper, type text}, {"MonthYearLong", Text.Proper, type text}}),
+    #"Filtered Rows1" = Table.SelectRows(#"Capitalized Each Word", each true),
+    #"Capitalized Each Word1" = Table.TransformColumns(#"Filtered Rows1",{{"Weekday", Text.Proper, type text}}),
+    #"Filtered Rows2" = Table.SelectRows(#"Capitalized Each Word1", each true),
+    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows2",{{"Year", Int64.Type}, {"MonthNum", Int64.Type}}),
+    #"Added Custom" = Table.AddColumn(#"Changed Type", "Month-Year", each Number.ToText([MonthNum], "00") & "-" & Number.ToText([Year])),
+    #"Inserted End of Month" = Table.AddColumn(#"Added Custom", "End of Month", each Date.EndOfMonth([Date]), type date),
+    // Adding new column to indicate if the month is completed or current month
+    #"Added Month Completed" = Table.AddColumn(#"Inserted End of Month", "Month Completed", each if Date.Year([Date]) < Date.Year(DateTime.LocalNow()) or (Date.Year([Date]) = Date.Year(DateTime.LocalNow()) and Date.Month([Date]) < Date.Month(DateTime.LocalNow())) then 1 else if Date.Year([Date]) = Date.Year(DateTime.LocalNow()) and Date.Month([Date]) = Date.Month(DateTime.LocalNow()) then 0 else null, Int64.Type),
+    #"Added Custom1" = Table.AddColumn(#"Added Month Completed", "End of month -1", each Date.EndOfMonth(Date.AddMonths([Date], -1))),
+    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "30 days lag", each Date.AddDays([Date], -30))
+in
+    #"Added Custom2"
