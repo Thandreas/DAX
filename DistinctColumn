@@ -1,0 +1,14 @@
+DistinctFlagColumn = 
+IF(
+    NOT(
+        COUNTROWS(
+            FILTER(
+                'Data',
+                'Data'[Kunde ID] = EARLIER('Data'[Kunde ID])
+                    && 'Data'[Index] <= EARLIER('Data'[Index])
+            )
+        ) > 1
+    ),
+    1,
+    0
+)
