@@ -1,0 +1,11 @@
+RelevanteStatuser = 
+DATATABLE (
+    "Status", STRING,
+    "Int", INTEGER,
+    {
+        {"Verdi 1", 1},
+        {"Verdi 2", 1},
+        {"Verdi 3", 1},
+        {"Verdi 4", 1}
+    }
+)
