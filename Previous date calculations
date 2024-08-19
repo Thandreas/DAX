@@ -47,3 +47,33 @@ CALCULATE(
     )
 )
 
+
+Bankkunder 1 år siden fra dagens dato = 
+VAR CurrentDate = TODAY()
+VAR TwelveMonthsAgo = EDATE(CurrentDate, -12)
+VAR Result = CALCULATE(
+    VALUES('rep F_KUNDER_ANT_DAG_TRN'[Antall]),
+    FILTER(
+        ALL('rep F_KUNDER_ANT_DAG_TRN'[Dato]),
+        'rep F_KUNDER_ANT_DAG_TRN'[Dato] = CALCULATE(MAX('rep F_KUNDER_ANT_DAG_TRN'[Dato]), 'rep F_KUNDER_ANT_DAG_TRN'[Dato] = TwelveMonthsAgo)
+    )
+)
+RETURN Result
+
+Bankkunder 2 mnd sia = 
+CALCULATE(
+    VALUES('rep F_KUNDER_ANT_DAG_TRN'[Antall]),
+    FILTER(
+        ALL('rep F_KUNDER_ANT_DAG_TRN'[Dato]),
+        'rep F_KUNDER_ANT_DAG_TRN'[Dato] = CALCULATE(MAX('rep F_KUNDER_ANT_DAG_TRN'[Dato]), 
+            'rep F_KUNDER_ANT_DAG_TRN'[Dato] <= EOMONTH(TODAY(), -2))
+    )
+)
+
+Bankkunder siste mnd i fjor = 
+VAR MaxDatePrevYear = CALCULATE(MAX('rep F_KUNDER_ANT_DAG_TRN'[Dato]), 'rep F_KUNDER_ANT_DAG_TRN'[Dato] >= DATE(YEAR(TODAY()) - 1, 1, 1) && 'rep F_KUNDER_ANT_DAG_TRN'[Dato] <= DATE(YEAR(TODAY()) - 1, 12, 31))
+VAR Result = CALCULATE(
+    VALUES('rep F_KUNDER_ANT_DAG_TRN'[Antall]),
+    'rep F_KUNDER_ANT_DAG_TRN'[Dato] = MaxDatePrevYear
+)
+RETURN Result
