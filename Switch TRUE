@@ -1,0 +1,12 @@
+---- SWITCH TRUE ----
+
+Arrow Icons utlån forrige mnd = 
+VAR Arrow =
+SWITCH (
+TRUE (),
+[Measure] < -0.0005, UNICHAR ( 129095 ),
+[Measure] >= -0.0005 && [Measure] <= 0.0005, UNICHAR ( 129094 ),
+[Measure] > 0.0005, UNICHAR ( 129093 )
+)
+RETURN
+Arrow
