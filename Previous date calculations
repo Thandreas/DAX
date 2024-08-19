@@ -1,0 +1,17 @@
+Utlån 1 år siden dagens dato = 
+
+VAR Result = CALCULATE(
+    SUM('rep A_MARKED_VOL_HP'[Volum (MNOK)]),
+    'rep A_MARKED_VOL_HP'[År sel] = YEAR(TODAY()) - 1 && 'rep A_MARKED_VOL_HP'[MndN] = MONTH(TODAY()) - 0
+)
+RETURN Result
+
+Utlån 2 mnd sia = 
+    CALCULATE(
+    VALUES('rep A_MARKED_VOL_HP'[Volum (MNOK)]),
+    FILTER(
+        ALL('rep A_MARKED_VOL_HP'[Mnd Dato]),
+        'rep A_MARKED_VOL_HP'[Mnd Dato] = CALCULATE(MAX('rep A_MARKED_VOL_HP'[Mnd Dato]), 
+            'rep A_MARKED_VOL_HP'[Mnd Dato] <= EOMONTH(TODAY(), -2))
+    )
+)
