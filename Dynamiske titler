@@ -5,3 +5,13 @@ Tittel 1 = FORMAT( "test " & SELECTEDVALUE(Table[Column]), "#,0.0")
 Tittel 2 = FORMAT( "test " & VALUES(Parameter[Parameter]), "#,0.0")
 
 Telle slicer = IF(ISFILTERED(Parameter[Parameter Fields]), COUNTROWS(VALUES(Parameter[Parameter Fields])),0)
+
+--- Dynamisk tittel med measure ---
+Innskuddsvolum forrige måned tekst = "Innskudd" & " " & [Forrige måned liten]
+
+Forrige måned liten = 
+FORMAT(DATE(YEAR(TODAY()), MONTH(TODAY()) - 1, DAY(TODAY()-1)), "MMMM", "nb-NO")
+
+Forrige måned = 
+UPPER(LEFT(FORMAT(DATE(YEAR(TODAY()), MONTH(TODAY()) - 1, DAY(TODAY())), "MMMM", "nb-NO"), 1)) 
+    & LOWER(RIGHT(FORMAT(DATE(YEAR(TODAY()), MONTH(TODAY()) - 1, DAY(TODAY())), "MMMM", "nb-NO"), LEN(FORMAT(DATE(YEAR(TODAY()), MONTH(TODAY()) - 1, DAY(TODAY())), "MMMM", "nb-NO")) - 1))
