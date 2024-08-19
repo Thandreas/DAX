@@ -15,3 +15,35 @@ Utlån 2 mnd sia =
             'rep A_MARKED_VOL_HP'[Mnd Dato] <= EOMONTH(TODAY(), -2))
     )
 )
+
+Utlån siste mnd i fjor = 
+VAR varTotal = 
+    CALCULATE(
+        SUM('rep A_MARKED_VOL_HP'[Volum (MNOK)]),
+        FILTER(
+            ALL(Kalender),
+            'Kalender'[År] = YEAR(TODAY()) - 1 && 'Kalender'[Mnd] = 12
+        )
+     )
+RETURN varTotal
+
+Utlånsvolum = 
+CALCULATE(
+    SUM(
+        'rep A_MARKED_VOL_HP'[Volum (MNOK)]
+        ), 
+        LASTDATE('rep A_MARKED_VOL_HP'[Mnd Dato]))
+
+Volum filter utlån = 
+CALCULATE(
+    SUM(
+        'rep A_MARKED_VOL_HP'[Volum (MNOK)]
+        ), LASTDATE('rep A_MARKED_VOL_HP'[Mnd Dato]), 'rep A_MARKED_VOL_HP'[Marked] = "Utlån")
+
+Vekst YTD = 
+CALCULATE(
+    SUM('rep A_MARKED_VOL_HP'[Volum (MNOK)]),
+    'rep A_MARKED_VOL_HP'[År Sel] = MAX('rep A_MARKED_VOL_HP'[År Sel]
+    )
+)
+
