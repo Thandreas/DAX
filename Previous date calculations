@@ -60,6 +60,16 @@ VAR Result = CALCULATE(
 )
 RETURN Result
 
+Bankkunder forrige mnd = 
+CALCULATE(
+    VALUES('rep F_KUNDER_ANT_DAG_TRN'[Antall]),
+    FILTER(
+        ALL('rep F_KUNDER_ANT_DAG_TRN'[Dato]),
+        'rep F_KUNDER_ANT_DAG_TRN'[Dato] = CALCULATE(MAX('rep F_KUNDER_ANT_DAG_TRN'[Dato]), 
+            'rep F_KUNDER_ANT_DAG_TRN'[Dato] <= EOMONTH(TODAY(), -1))
+    )
+)
+
 Bankkunder 2 mnd sia = 
 CALCULATE(
     VALUES('rep F_KUNDER_ANT_DAG_TRN'[Antall]),
@@ -77,3 +87,45 @@ VAR Result = CALCULATE(
     'rep F_KUNDER_ANT_DAG_TRN'[Dato] = MaxDatePrevYear
 )
 RETURN Result
+
+Hovedbankkunder 1 mnd siden fra dagens dato = 
+VAR CurrentDate = MAX ( 'rep F_KUNDER_ANT_DAG_TRN'[Dato] )
+VAR OneMonthAgo = EDATE ( CurrentDate, -1 )
+VAR Result = CALCULATE (
+        LASTNONBLANK ( 'rep F_KUNDER_ANT_DAG_TRN'[Lønnsinngang], 1 ),
+        ALL ( 'rep F_KUNDER_ANT_DAG_TRN' ),
+        'rep F_KUNDER_ANT_DAG_TRN'[Dato] = OneMonthAgo
+    )
+RETURN Result
+
+Hovedbankkunder 1 år siden fra dagens dato = 
+VAR CurrentDate = TODAY()
+VAR TwelveMonthsAgo = EDATE(CurrentDate, -12)
+VAR Result = CALCULATE(
+    VALUES('rep F_KUNDER_ANT_DAG_TRN'[Lønnsinngang]),
+    FILTER(
+        ALL('rep F_KUNDER_ANT_DAG_TRN'[Dato]),
+        'rep F_KUNDER_ANT_DAG_TRN'[Dato] = CALCULATE(MAX('rep F_KUNDER_ANT_DAG_TRN'[Dato]), 'rep F_KUNDER_ANT_DAG_TRN'[Dato] = TwelveMonthsAgo)
+    )
+)
+RETURN Result
+
+Hovedbankkunder rullerende 1 mnd = 
+VAR CurrentDay = 
+    CALCULATE(
+        SUM('rep F_KUNDER_ANT_DAG_TRN'[Lønnsinngang]),
+        FILTER(
+            ALLSELECTED('rep F_KUNDER_ANT_DAG_TRN'[Dato]),
+            'rep F_KUNDER_ANT_DAG_TRN'[Dato] = MAX('rep F_KUNDER_ANT_DAG_TRN'[Dato])
+        )
+    )
+VAR PrevioDay = 
+    CALCULATE(
+        SUM('rep F_KUNDER_ANT_DAG_TRN'[Lønnsinngang]),
+        FILTER(
+            ALLSELECTED('rep F_KUNDER_ANT_DAG_TRN'[Dato]),
+            'rep F_KUNDER_ANT_DAG_TRN'[Dato] = EDATE(MAX('rep F_KUNDER_ANT_DAG_TRN'[Dato]), -1)
+        )
+    )
+RETURN
+    CurrentDay - PrevioDay
