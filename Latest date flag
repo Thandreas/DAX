@@ -1,0 +1,9 @@
+LatestDateFlag = 
+IF(
+    OR(
+        'rep F_KUNDER_ANT_DAG_TRN'[Dato] = DATE(YEAR('rep F_KUNDER_ANT_DAG_TRN'[Dato]), 12, 31),
+        'rep F_KUNDER_ANT_DAG_TRN'[Dato] = CALCULATE(MAX('rep F_KUNDER_ANT_DAG_TRN'[Dato]), ALL('rep F_KUNDER_ANT_DAG_TRN'))
+    ),
+    1,
+    0
+)
