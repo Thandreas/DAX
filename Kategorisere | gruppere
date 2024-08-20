@@ -1,0 +1,14 @@
+Saker kategorisert på antall avslag = 
+VAR EventCount = 
+    CALCULATE(
+        COUNTROWS(PM_SAKER_POL), 
+        ALLEXCEPT(PM_SAKER_POL, 
+        PM_SAKER_POL[SaksID])
+    )
+
+RETURN
+    SWITCH(
+        TRUE(),
+        EventCount <=5, FORMAT(EventCount, "0"),
+        TRUE(), "> 5"
+    )
