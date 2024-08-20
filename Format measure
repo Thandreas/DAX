@@ -1,1 +1,3 @@
 Measuret = FORMAT([Count measure] / [Count ID] * 100, "0,0") & " %" & " av søknader"
+
+Tittel 4 = FORMAT( "Flere faktorer " & VALUES(Parameter[Parameter]), "#,0.0")
