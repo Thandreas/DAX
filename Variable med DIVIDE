@@ -1,0 +1,15 @@
+Antall transaksjoner per mnd per kunde = 
+
+VAR max_year = MAX('Table'[Year])
+VAR month_number = MONTH(today())-1
+
+VAR div =
+CALCULATE(
+    SUM(
+        'Table'[Antall.Trn]
+    ), 
+    'Table'[Year] = max_year
+) / month_number
+
+RETURN
+DIVIDE (div, [Measure kunder])
