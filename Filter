@@ -1,1 +1,8 @@
 Count SaksID = CALCULATE(count(Table1[Column]), 'Table2'[Column2] IN VALUES(RelevanteStatuser[Status]))
+
+Count kunder som har innsendt etter feil = CALCULATE(
+    COUNTROWS(
+        FILTER(AntallTilfellerUlikeSaker, 
+        CONTAINSSTRING(AntallTilfellerUlikeSaker[AlleStatuser], "Søknad feilet, Søknad innsendt"))
+    )
+)
