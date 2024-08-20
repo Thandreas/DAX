@@ -1,0 +1,1 @@
+Measuret = FORMAT([Count measure] / [Count ID] * 100, "0,0") & " %" & " av søknader"
