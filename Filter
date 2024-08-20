@@ -1,0 +1,1 @@
+Count SaksID = CALCULATE(count(Table1[Column]), 'Table2'[Column2] IN VALUES(RelevanteStatuser[Status]))
