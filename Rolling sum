@@ -19,7 +19,7 @@ RETURN
 CALCULATE(
     [Count customer],
     FILTER(
-        ALL('Mislighold data'),
+        ALL('Table'),
         'Table'[Date] <= CurrentMonth
         &&
         'Table'[Marked] = selected_marked
