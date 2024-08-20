@@ -1,0 +1,48 @@
+Antall grønne saker med gamle verdier = IF (COUNTROWS(
+    FILTER(
+        'PolicyKalkulator', 
+        PolicyKalkulator[AndreBrudd] = 0 && 
+        PolicyKalkulator[Konklusjon] <> BLANK() &&
+        ((PolicyKalkulator[GG] <= [Verdien InitiellGG])) && 
+        PolicyKalkulator[GG] <> BLANK() &&
+        ((PolicyKalkulator[LI] >= [Verdien InitiellLI])) &&
+        PolicyKalkulator[LI] <> BLANK() &&
+        ((PolicyKalkulator[MaksAlder] <= [Verdien InitiellAlder]))
+    ) 
+) <> Blank(), COUNTROWS(
+    FILTER(
+        'PolicyKalkulator', 
+        PolicyKalkulator[AndreBrudd] = 0 && 
+        PolicyKalkulator[Konklusjon] <> BLANK() &&
+        ((PolicyKalkulator[GG] <= [Verdien InitiellGG])) && 
+        PolicyKalkulator[GG] <> BLANK() &&
+        ((PolicyKalkulator[LI] >= [Verdien InitiellLI])) &&
+        PolicyKalkulator[LI] <> BLANK() &&
+        ((PolicyKalkulator[MaksAlder] <= [Verdien InitiellAlder]))
+    ) 
+), 0)
+
+
+Antall grønne saker med nye verdier = IF(BLANK() = COUNTROWS(
+    FILTER(
+        'PolicyKalkulator', 
+        PolicyKalkulator[AndreBrudd] = 0 && 
+        PolicyKalkulator[Konklusjon] <> BLANK() &&
+        (PolicyKalkulator[GG] <= [Verdien Ny maks GG] && 
+        PolicyKalkulator[GG] <> BLANK() &&
+        (PolicyKalkulator[LI] >= [Verdien Ny min LI]) &&
+        PolicyKalkulator[LI] <> BLANK() &&
+        (PolicyKalkulator[MaksAlder] <= [Verdien Ny maks alder])
+    )
+)), 0, COUNTROWS(
+    FILTER(
+        'PolicyKalkulator', 
+        PolicyKalkulator[AndreBrudd] = 0 && 
+        PolicyKalkulator[Konklusjon] <> BLANK() &&
+        (PolicyKalkulator[GG] <= [Verdien Ny maks GG] && 
+        PolicyKalkulator[GG] <> BLANK() &&
+        (PolicyKalkulator[LI] >= [Verdien Ny min LI]) &&
+        PolicyKalkulator[LI] <> BLANK() &&
+        (PolicyKalkulator[MaksAlder] <= [Verdien Ny maks alder])
+    )
+)))
