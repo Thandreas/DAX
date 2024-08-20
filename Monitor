@@ -1,0 +1,42 @@
+First trans = 
+VAR CurrentAccount = Transaksjoner[Kontonr]
+VAR CurrentTransactionDate = Transaksjoner[BOKFORT_DATO]
+VAR TransactionRank = 
+    RANKX(
+        FILTER(
+            Transaksjoner, 
+            Transaksjoner[Kontonr] = CurrentAccount
+        ),
+        Transaksjoner[BOKFORT_DATO],
+        ,
+        ASC,
+        DENSE
+    )
+
+VAR MellomBelop100 =
+    IF(AND(Transaksjoner[BELOP] <= XXX, Transaksjoner[BELOP] >= -XXX),1,0)
+RETURN
+IF(AND(TransactionRank = 1, MellomBelopXXX = 1), TRUE, FALSE)
+
+IsRoundThousand = 
+IF(MOD([BELOP], 100) = 0, "Ja", "Nei")
+
+Second trans = 
+VAR CurrentAccount = Transaksjoner[Kontonr]
+VAR CurrentTransactionDate = Transaksjoner[BOKFORT_DATO]
+VAR TransactionRank = 
+    RANKX(
+        FILTER(
+            Transaksjoner, 
+            Transaksjoner[Kontonr] = CurrentAccount
+        ),
+        Transaksjoner[BOKFORT_DATO],
+        ,
+        ASC,
+        DENSE
+    )
+
+VAR MellomBelop15k =
+    IF(OR(Transaksjoner[BELOP] >= XXX, Transaksjoner[BELOP] <= XXX),1,0)
+RETURN
+IF(AND(TransactionRank = 2, MellomBelopXXXk = 1), TRUE, FALSE)
