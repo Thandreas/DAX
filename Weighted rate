@@ -1,5 +1,48 @@
+## Dersom man allerede har en vekta renta per kunde - og vil ytterligere regne det på tvers av hele porteføljen ##
 Vekta rente = 
     SUMX('Table',
         'Table'[Column] * 'Table'[Utlån_weighted_rate] )
         /
         SUM('Table'[Column])
+
+
+Vekta innskuddsrente = 
+DIVIDE(
+        SUMX(
+            FILTER('pm REP_KONTO_BAL_MND', 'pm REP_KONTO_BAL_MND'[Produktgruppe] = "Innskudd"),
+            'pm REP_KONTO_BAL_MND'[Saldo] * 'pm REP_KONTO_BAL_MND'[R_Sats1]
+        ),
+        SUMX(
+            FILTER('pm REP_KONTO_BAL_MND', 'pm REP_KONTO_BAL_MND'[Produktgruppe] = "Innskudd"),
+            'pm REP_KONTO_BAL_MND'[Saldo]
+        )) / 100
+
+Vekta innskuddsrente (with ALL) = 
+
+DIVIDE(
+    SUMX(
+        FILTER(ALL('pm REP_KONTO_BAL_MND'), 'pm REP_KONTO_BAL_MND'[Produktgruppe] = "innskudd"
+        && 'pm REP_KONTO_BAL_MND'[MaxDato flag BAL] = 1),
+        'pm REP_KONTO_BAL_MND'[Saldo] * 'pm REP_KONTO_BAL_MND'[R_Sats1]
+    ),
+    SUMX(
+        FILTER(ALL('pm REP_KONTO_BAL_MND'), 'pm REP_KONTO_BAL_MND'[Produktgruppe] = "innskudd"
+        && 'pm REP_KONTO_BAL_MND'[MaxDato flag BAL] = 1),
+        'pm REP_KONTO_BAL_MND'[Saldo]
+    )
+) / 100
+
+Vekta utlånsrente (with ALL) = 
+
+DIVIDE(
+    SUMX(
+        FILTER(ALL('pm REP_KONTO_BAL_MND'), 'pm REP_KONTO_BAL_MND'[Produktgruppe] = "utlån"
+        && 'pm REP_KONTO_BAL_MND'[MaxDato flag BAL] = 1),
+        'pm REP_KONTO_BAL_MND'[Saldo] * 'pm REP_KONTO_BAL_MND'[R_Sats1]
+    ),
+    SUMX(
+        FILTER(ALL('pm REP_KONTO_BAL_MND'), 'pm REP_KONTO_BAL_MND'[Produktgruppe] = "utlån"
+        && 'pm REP_KONTO_BAL_MND'[MaxDato flag BAL] = 1),
+        'pm REP_KONTO_BAL_MND'[Saldo]
+    )
+) / 100
