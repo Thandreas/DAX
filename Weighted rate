@@ -1,0 +1,5 @@
+Vekta rente = 
+    SUMX('Table',
+        'Table'[Column] * 'Table'[Utlån_weighted_rate] )
+        /
+        SUM('Table'[Column])
