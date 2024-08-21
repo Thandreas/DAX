@@ -6,3 +6,13 @@ Count kunder som har innsendt etter feil = CALCULATE(
         CONTAINSSTRING(AntallTilfellerUlikeSaker[AlleStatuser], "Søknad feilet, Søknad innsendt"))
     )
 )
+
+Antall kontoer forrige mnd dynamisk filter = 
+VAR SelectedDate = MAX('pm REP_KONTO_BAL_MND'[MndDato])
+VAR PreviousMonthEndDate = EOMONTH(SelectedDate, -1)
+VAR PreviousMonthStartDate = DATE(YEAR(PreviousMonthEndDate), MONTH(PreviousMonthEndDate), 1)
+RETURN
+CALCULATE(
+    [Antall konto], 
+    'pm REP_KONTO_BAL_MND'[MndDato] >= PreviousMonthStartDate && 'pm REP_KONTO_BAL_MND'[MndDato] <= PreviousMonthEndDate
+)
