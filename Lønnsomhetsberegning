@@ -1,0 +1,22 @@
+Besparelse innskudd 2 = 
+
+VAR andel_likv_portef = 0.125
+VAR andel_utlaan = 0.875
+
+VAR laanerente_obos = CALCULATE([Vekta utlånsrente (with ALL)])
+
+Var historisk_kost_likviditetsportefoljen = AVERAGE('Plassering likvidport parameter'[Plassering likvidport parameter])
+
+VAR beregning =
+[Innskuddsvolum] * ((andel_likv_portef * historisk_kost_likviditetsportefoljen + andel_utlaan * laanerente_obos) - [Vekta innskuddsrente])
+
+RETURN
+    beregning
+
+
+Elementer som ikke er med i en rentenettoberegning som ovenfor er:
+  * Innskuddsdekning 45%
+  * Risiko
+  * Kapitalkostnad - kostnaden ved å holde kapital
+  * 10% EK avkastning
+  * Driftskostnader
