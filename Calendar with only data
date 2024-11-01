@@ -1,0 +1,4 @@
+https://www.reddit.com/r/PowerBI/comments/l2q2se/slicer_date_hierarchy_show_only_dates_with_data/
+
+Countrows measure = countrows(tabellen du jobber med)
+-- Set filter to greater than or equal to 1
