@@ -42,7 +42,35 @@ else "Weekday"),
     // Add the new column to calculate months difference and assign the correct value for each row
     #"Added Months Difference" = Table.AddColumn(#"Added Custom2", "Month Sequence", each -1 * (Date.Year([Date]) - Date.Year(DateTime.LocalNow())) * 12 - (Date.Month([Date]) - Date.Month(DateTime.LocalNow())) + 1, Int64.Type),
     
-    #"Sorted Rows" = Table.Sort(#"Added Months Difference",{{"Date", Order.Ascending}})
+    #"Sorted Rows" = Table.Sort(#"Added Months Difference",{{"Date", Order.Ascending}}),
     
+    CurrentDate = DateTime.LocalNow(),
+    CurrentYear = Date.Year(CurrentDate),
+    CurrentMonth = Date.Month(CurrentDate),
+    DayOfMonth = Date.Day(CurrentDate),
+
+    #"Added Column" = Table.AddColumn(#"Sorted Rows", "Month Status", each 
+        let
+            DateYear = Date.Year([Date]),
+            DateMonth = Date.Month([Date]),
+            DayOfMonth = Date.Day([Date]),
+            EndOfPreviousMonth = Date.EndOfMonth([Date]),
+            CutoffDate = Date.AddDays(EndOfPreviousMonth, 10) // 10th of the next month
+        in
+            // Return 1 for all dates before or on the 10th of the current month
+            if (DateYear < CurrentYear or (DateYear = CurrentYear and DateMonth < CurrentMonth)) then 1
+            // Return 1 for dates from the 1st to the 10th of the current month
+            else if (DateYear = CurrentYear and DateMonth = CurrentMonth and DayOfMonth <= 10) then 1
+            // Return 0 for dates after the 10th of the current month until the 10th of the next month
+            else if (DateYear = CurrentYear and DateMonth = CurrentMonth and DayOfMonth > 10 and DayOfMonth <= 10) then 0
+            // Return 0 for the remaining dates in February after the 10th
+            else if (DateYear = CurrentYear and DateMonth = 2 and DayOfMonth > 10) then 0
+            // Return null for dates after the 10th of the following month
+            else if (DateYear = CurrentYear and DateMonth = CurrentMonth + 1) then null
+            else null, 
+        Int64.Type
+    ),
+    #"Added Today or Past Column" = Table.AddColumn(#"Added Column", "Today or Past", each if [Date] <= Date.From(DateTime.LocalNow()) then 1 else 0, Int64.Type)
+
 in
-    #"Sorted Rows"
+    #"Added Today or Past Column"
