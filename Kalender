@@ -1,6 +1,6 @@
 let
-    StartDate = #date(2018, 1, 1),
-    EndDate = DateTime.Date(DateTime.LocalNow()),
+    StartDate = #date(2014, 1, 1),
+    EndDate = #date(Date.Year(DateTime.LocalNow()), 12, 31),
     #"==SET PARAMETERS ABOVE==" = 1,
     ListDates = List.Dates(StartDate, Number.From(EndDate - StartDate)+1, #duration(1,0,0,0)),
     #"Converted to Table" = Table.FromList(ListDates, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
@@ -37,6 +37,12 @@ else "Weekday"),
     // Adding new column to indicate if the month is completed or current month
     #"Added Month Completed" = Table.AddColumn(#"Inserted End of Month", "Month Completed", each if Date.Year([Date]) < Date.Year(DateTime.LocalNow()) or (Date.Year([Date]) = Date.Year(DateTime.LocalNow()) and Date.Month([Date]) < Date.Month(DateTime.LocalNow())) then 1 else if Date.Year([Date]) = Date.Year(DateTime.LocalNow()) and Date.Month([Date]) = Date.Month(DateTime.LocalNow()) then 0 else null, Int64.Type),
     #"Added Custom1" = Table.AddColumn(#"Added Month Completed", "End of month -1", each Date.EndOfMonth(Date.AddMonths([Date], -1))),
-    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "30 days lag", each Date.AddDays([Date], -30))
+    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "30 days lag", each Date.AddDays([Date], -30)),
+    
+    // Add the new column to calculate months difference and assign the correct value for each row
+    #"Added Months Difference" = Table.AddColumn(#"Added Custom2", "Month Sequence", each -1 * (Date.Year([Date]) - Date.Year(DateTime.LocalNow())) * 12 - (Date.Month([Date]) - Date.Month(DateTime.LocalNow())) + 1, Int64.Type),
+    
+    #"Sorted Rows" = Table.Sort(#"Added Months Difference",{{"Date", Order.Ascending}})
+    
 in
-    #"Added Custom2"
+    #"Sorted Rows"
