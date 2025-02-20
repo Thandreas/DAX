@@ -1,0 +1,19 @@
+Parameter count tapsårsak = 
+
+VAR CY = FORMAT(TODAY(), "YYYY")
+VAR CY1 = CY-1
+VAR CY2 = CY-2
+VAR CY3 = CY-3
+
+
+RETURN
+{
+    (CY, NAMEOF('Measure table'[Count tapsårsak CY]), 0),
+    ("%", NAMEOF('Measure table'[Count tapsårsak CY %]), 1),
+    (CY1, NAMEOF('Measure table'[Count tapsårsak CY-1]), 2),
+    ("%", NAMEOF('Measure table'[Count tapsårsak CY-1 %]), 3),
+    (CY2, NAMEOF('Measure table'[Count tapsårsak CY-2]), 4),
+    ("%", NAMEOF('Measure table'[Count tapsårsak CY-2 %]), 5),
+    (CY3, NAMEOF('Measure table'[Count tapsårsak CY-3]), 6),
+    ("%", NAMEOF('Measure table'[Count tapsårsak CY-3 %]), 7)
+}
