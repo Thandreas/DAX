@@ -1,0 +1,7 @@
+Salg = 
+SWITCH(
+SELECTEDVALUE(
+  'Salg kr antall'[Indeks],1),1,
+  [Salg kroner],2,
+  [Salg antall],"Ikke valgt enhet"
+)
